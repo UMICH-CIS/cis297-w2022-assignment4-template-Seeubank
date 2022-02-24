@@ -44,7 +44,7 @@ namespace PatientRecordApplication
         /// <summary>
         /// author: Sarah Eubank
         /// creation date: 2/15/2022
-        /// last modified: 2/17/2022
+        /// last modified: 2/23/2022
         /// function to open a file at path checks that file opened properly
         /// </summary>
         static void FileOperation(string path)
@@ -55,7 +55,8 @@ namespace PatientRecordApplication
                 myfile.Close();
             }
 
-            Console.Write("File created at " + File.GetCreationTime(path));
+            Console.WriteLine("File created at " + File.GetCreationTime(path));
+            Console.Write("Press enter to continue");
             Console.ReadLine();        
         }
 
@@ -99,7 +100,7 @@ namespace PatientRecordApplication
         /// <summary>
         /// author: Sarah Eubank
         /// creation date: 2/15/2022
-        /// last modified: 2/17/2022
+        /// last modified: 2/23/2022
         /// function takes user entered patient info and adds it to file
         /// </summary>
         static void enterPatientInfo(string path)
@@ -116,7 +117,7 @@ namespace PatientRecordApplication
             Console.Write("Enter balance owed: ");
             patient.currentBalance = Convert.ToDecimal(Console.ReadLine());
 
-            sw.Write("{0} {1} {2}" , patient.idNum, patient.name, patient.currentBalance);
+            sw.Write("{0}, {1}, {2}" , patient.idNum, patient.name, patient.currentBalance);
             sw.Write("\n");
 
             sw.Close();
@@ -125,7 +126,7 @@ namespace PatientRecordApplication
         /// <summary>
         /// author: Sarah Eubank
         /// creation date: 2/17/2022
-        /// last modified: 2/17/2022
+        /// last modified: 2/23/2022
         /// function that allows user to search file by ID number
         /// displays any found to console
         /// </summary>
@@ -144,14 +145,14 @@ namespace PatientRecordApplication
 
             while(line != null)
             {
-                    fields = line.Split(' ');
+                    fields = line.Split(',');
                     patient.idNum = Convert.ToInt32(fields[0]);
                     patient.name = fields[1];
                     patient.currentBalance = Convert.ToDecimal(fields[2]);
 
                     if (patient.idNum == IDnum)
                     {
-                        Console.WriteLine("{0} {1} {2}", patient.idNum, patient.name, patient.currentBalance);
+                        Console.WriteLine("{0}, {1}, {2}", patient.idNum, patient.name, patient.currentBalance);
                     }
 
                     line = sr.ReadLine();
@@ -165,7 +166,7 @@ namespace PatientRecordApplication
         /// <summary>
         /// author: Sarah Eubank
         /// creation date: 2/17/2022
-        /// last modified: 2/17/2022
+        /// last modified: 2/23/2022
         /// function that searches the file for a minimum balanced owed
         /// displays any found to console
         /// </summary>
@@ -184,14 +185,14 @@ namespace PatientRecordApplication
 
             while (line != null)
             {
-                fields = line.Split(' ');
+                fields = line.Split(',');
                 patient.idNum = Convert.ToInt32(fields[0]);
                 patient.name = fields[1];
                 patient.currentBalance = Convert.ToDecimal(fields[2]);
 
                 if (patient.currentBalance >= owed)
                 {
-                    Console.WriteLine("{0} {1} {2}", patient.idNum, patient.name, patient.currentBalance);
+                    Console.WriteLine("{0}, {1}, {2}", patient.idNum, patient.name, patient.currentBalance);
                 }
 
                 line = sr.ReadLine();
