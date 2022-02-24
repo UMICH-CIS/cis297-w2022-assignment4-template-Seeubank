@@ -8,7 +8,7 @@ using System.IO;
 /// <summary>
 /// author: Sarah Eubank
 /// creation date: 2/13/2022
-/// last modified: 2/17/2022
+/// last modified: 2/23/2022
 /// purpose: program that creates a class PatientClass that contains a patient's id number, their name, and a current balance owed
 /// program writes and reads this info to a file
 /// </summary>
@@ -27,6 +27,20 @@ namespace PatientRecordApplication
             public string name;
             public decimal currentBalance;
 
+        }
+
+        /// <summary>
+        /// author: Sarah Eubank
+        /// creation date: 2/23/2022
+        /// last modified: 2/23/2022
+        /// class for user defined exception
+        /// throws if there is no input entered by the user
+        /// </summary>
+        public class NoInput : Exception
+        {
+            public NoInput(string message) : base(message)
+            {
+            }
         }
 
         static void Main(string[] args)
@@ -49,15 +63,22 @@ namespace PatientRecordApplication
         /// </summary>
         static void FileOperation(string path)
         {
-            if(!File.Exists(path))
+            try
             {
-                var myfile = File.Create(path);
-                myfile.Close();
-            }
+                if (!File.Exists(path))
+                {
+                    var myfile = File.Create(path);
+                    myfile.Close();
+                }
 
-            Console.WriteLine("File created at " + File.GetCreationTime(path));
-            Console.Write("Press enter to continue");
-            Console.ReadLine();        
+                Console.WriteLine("File created at " + File.GetCreationTime(path));
+                Console.Write("Press enter to continue");
+                Console.ReadLine();
+            }
+            catch(AccessViolationException)
+            {
+                Console.WriteLine("ERROR: file creation/reading in protected memory. Change file path.");
+            }
         }
 
         /// <summary>
@@ -108,14 +129,22 @@ namespace PatientRecordApplication
             Patientclass patient = new Patientclass();
             StreamWriter sw = File.AppendText(path);
 
-            Console.Write("Enter patient ID number: ");
-            patient.idNum = Convert.ToInt32(Console.ReadLine());
+            try
+            {
+                Console.Write("Enter patient ID number: ");
+                patient.idNum = Convert.ToInt32(Console.ReadLine());
 
-            Console.Write("Enter patient name: ");
-            patient.name = Console.ReadLine();
+                Console.Write("Enter patient name: ");
+                patient.name = Console.ReadLine();
 
-            Console.Write("Enter balance owed: ");
-            patient.currentBalance = Convert.ToDecimal(Console.ReadLine());
+                Console.Write("Enter balance owed: ");
+                patient.currentBalance = Convert.ToDecimal(Console.ReadLine());
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("ERROR: Invalid entry.");
+                Console.ReadLine();
+            }
 
             sw.Write("{0}, {1}, {2}" , patient.idNum, patient.name, patient.currentBalance);
             sw.Write("\n");
@@ -136,15 +165,22 @@ namespace PatientRecordApplication
             StreamReader sr = new StreamReader(path);
             Patientclass patient = new Patientclass();
             string[] fields;
+            int IDnum = 0;
 
             Console.Write("Enter ID number to search by: ");
-            int IDnum = Convert.ToInt32(Console.ReadLine());
+            IDnum = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("\n");
 
-            string line = sr.ReadLine();
-
-            while(line != null)
+            if (IDnum == 0)
             {
+                throw (new NoInput("ERROR: Invalid ID number"));
+            }
+            else
+            {
+                string line = sr.ReadLine();
+
+                while (line != null)
+                {
                     fields = line.Split(',');
                     patient.idNum = Convert.ToInt32(fields[0]);
                     patient.name = fields[1];
@@ -156,11 +192,12 @@ namespace PatientRecordApplication
                     }
 
                     line = sr.ReadLine();
-            }
+                }
 
-            sr.Close();
-            Console.WriteLine("Press enter to continue");
-            Console.ReadLine();
+                sr.Close();
+                Console.WriteLine("Press enter to continue");
+                Console.ReadLine();
+            } 
         }
 
         /// <summary>
