@@ -49,18 +49,14 @@ namespace PatientRecordApplication
         /// </summary>
         static void FileOperation(string path)
         {
-            File.Create(path).Close();
+            if(!File.Exists(path))
+            {
+                var myfile = File.Create(path);
+                myfile.Close();
+            }
 
-            if (File.Exists(path))
-            {
-                Console.Write("File created at " + File.GetCreationTime(path));
-                Console.ReadLine();
-            }
-            else
-            {
-                Console.Write("File not created.");
-                Console.ReadLine();
-            }
+            Console.Write("File created at " + File.GetCreationTime(path));
+            Console.ReadLine();        
         }
 
         /// <summary>
